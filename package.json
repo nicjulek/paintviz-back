@@ -1,0 +1,24 @@
+{
+  "name": "paintviz-back",
+  "version": "1.0.0",
+  "description": "O **PaintViz** é um sistema desenvolvido para auxiliar a **Carga Pesada**, uma fábrica de carrocerias para caminhões, na personalização e visualização digital das pinturas das carretas. O objetivo principal é proporcionar aos clientes uma experiência interativa na escolha e validação da pintura antes da produção, reduzindo erros e retrabalho.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicjulek/paintviz-back.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nicjulek/paintviz-back/issues"
+  },
+  "homepage": "https://github.com/nicjulek/paintviz-back#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3"
+  }
+}
