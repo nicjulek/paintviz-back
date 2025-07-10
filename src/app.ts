@@ -1,11 +1,12 @@
+import 'reflect-metadata'
+import './container'
 import express from 'express'
+import routes from './routes'
 
 const app = express()
 
 app.use(express.json())
 
-app.get('/hello-world', (req, res) => {
-  res.json({ nicole: 'Hello world' }).status(200)
-})
+app.use(routes)
 
 export default app
