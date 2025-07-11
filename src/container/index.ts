@@ -1,5 +1,5 @@
-import { PinturaRepository } from "../repositories/PinturaRepository";
 import { container } from "tsyringe";
+import { PinturaRepository } from "../repositories/PinturaRepository";
 
 container.registerSingleton('PinturaRepository', PinturaRepository)
 

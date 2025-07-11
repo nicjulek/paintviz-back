@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "migrate:make": "knex migrate:make -x ts --migrations-directory src/migrations",
+    "migrate:latest": "knex migrate:latest --knexfile knexfile.ts",
+    "migrate:rollback": "knex migrate:rollback --knexfile knexfile.ts"
   },
   "repository": {
     "type": "git",
@@ -26,6 +29,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "knex": "^3.1.0",
     "mysql": "^2.18.1",
