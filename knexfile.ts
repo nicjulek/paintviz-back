@@ -5,7 +5,7 @@ dotenv.config();
 
 const config: { [key: string]: Knex.Config } = {
   development: {
-    client: "mysql",
+    client: "mysql2",
     connection: {
       host: process.env.DB_HOST || 'localhost',
       port: Number(process.env.DB_PORT) || 3306,
@@ -30,7 +30,7 @@ const config: { [key: string]: Knex.Config } = {
   },
 
   staging: {
-    client: "mysql",
+    client: "mysql2",
     connection: {
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT) || 3306,
@@ -56,7 +56,7 @@ const config: { [key: string]: Knex.Config } = {
   },
 
   production: {
-    client: "mysql",
+    client: "mysql2",
     connection: {
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT) || 3306,

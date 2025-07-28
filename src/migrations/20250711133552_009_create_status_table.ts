@@ -6,7 +6,7 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('Status', (table) => {
       table.increments('id_status').primary();
       table.string('descricao', 255).notNullable();
-      table.date('data_definicao_status').notNullable();
+      table.timestamp('data_definicao_status').notNullable();
     });
   }
 }

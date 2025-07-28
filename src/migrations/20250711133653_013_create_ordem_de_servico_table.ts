@@ -6,9 +6,9 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('OrdemDeServico', (table) => {
       table.increments('id_ordem_servico').primary();
       table.string('identificacao_veiculo', 100).notNullable();
-      table.date('data_emissao').notNullable().defaultTo(knex.fn.now());
-      table.date('data_entrega').nullable();
-      table.date('data_programada').nullable();
+      table.timestamp('data_emissao').notNullable().defaultTo(knex.fn.now());
+      table.timestamp('data_entrega').nullable();
+      table.timestamp('data_programada').nullable();
       table.string('modelo_veiculo', 100).notNullable();
       table.string('placa_veiculo', 10).notNullable();
       table.string('numero_box', 20).nullable();
