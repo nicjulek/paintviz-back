@@ -32,6 +32,9 @@ export interface Cliente {
   id_cliente?: number;
   celular: string;
   email: string;
+  //Adicionado para suportar pessoa física e jurídica
+  pessoa_fisica?: Fisico | null;
+  pessoa_juridica?: Juridico | null;
 }
 
 export interface Fisico {

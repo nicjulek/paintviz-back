@@ -19,7 +19,6 @@ export class UsuarioController {
                 });
             }
 
-            // Verificar se usuário já existe
             const usuarioExists = await this.usuarioRepository.checkUsuarioExists(nome);
             if (usuarioExists) {
                 return res.status(409).json({
@@ -27,13 +26,11 @@ export class UsuarioController {
                 });
             }
 
-            // Criar usuário na tabela Usuario
             const novoUsuario = await this.usuarioRepository.createusuario({
                 nome,
                 senha
             });
 
-            // Se isAdmin for true, criar registro na tabela Administrador
             if (isAdmin) {
                 await this.usuarioRepository.createAdmin(novoUsuario.id_usuario!);
             }
@@ -59,7 +56,6 @@ export class UsuarioController {
         try {
             const { id } = req.params;
 
-            // Verificar se usuário existe
             const usuario = await this.usuarioRepository.findById(Number(id));
             if (!usuario) {
                 return res.status(404).json({
@@ -67,7 +63,6 @@ export class UsuarioController {
                 });
             }
 
-            // O DELETE CASCADE do banco já remove da tabela Administrador
             await this.usuarioRepository.deleteUsuario(Number(id));
 
             return res.status(200).json({
@@ -86,7 +81,6 @@ export class UsuarioController {
         try {
             const usuarios = await this.usuarioRepository.listUsuarios();
 
-            // Para cada usuário, verificar se é admin consultando a tabela Administrador
             const usuariosComAdmin = await Promise.all(
                 usuarios.map(async (usuario) => {
                     const isAdmin = await this.usuarioRepository.isAdmin(usuario.id_usuario!);
@@ -120,7 +114,6 @@ export class UsuarioController {
                 });
             }
 
-            // Verificar se é admin consultando a tabela Administrador
             const isAdmin = await this.usuarioRepository.isAdmin(usuario.id_usuario!);
 
             return res.status(200).json({
@@ -142,7 +135,6 @@ export class UsuarioController {
             const { id } = req.params;
             const { nome, senha, isAdmin } = req.body;
 
-            // Verificar se usuário existe
             const usuario = await this.usuarioRepository.findById(Number(id));
             if (!usuario) {
                 return res.status(404).json({
@@ -150,7 +142,6 @@ export class UsuarioController {
                 });
             }
 
-            // Atualizar dados básicos na tabela Usuario
             const updateData: any = {};
             if (nome) updateData.nome = nome;
             if (senha) updateData.senha = senha;
@@ -159,15 +150,12 @@ export class UsuarioController {
                 await this.usuarioRepository.updateUsuario(Number(id), updateData);
             }
 
-            // Gerenciar status de admin na tabela Administrador
             if (typeof isAdmin === 'boolean') {
                 const currentlyAdmin = await this.usuarioRepository.isAdmin(Number(id));
                 
                 if (isAdmin && !currentlyAdmin) {
-                    // Adicionar à tabela Administrador
                     await this.usuarioRepository.createAdmin(Number(id));
                 } else if (!isAdmin && currentlyAdmin) {
-                    // Remover da tabela Administrador
                     await this.usuarioRepository.removeAdminStatus(Number(id));
                 }
             }

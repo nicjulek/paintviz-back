@@ -154,7 +154,6 @@ export class PinturaController {
                 return res.status(400).json({ error: 'SVG é obrigatório' });
             }
 
-            // Verificar se pintura existe
             const pinturaExists = await this.pinturaRepository.pinturaExists(Number(id));
             if (!pinturaExists) {
                 return res.status(404).json({ error: 'Pintura não encontrada' });
