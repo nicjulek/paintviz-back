@@ -85,7 +85,5 @@ export class AuthController {
                 error: 'Erro interno do servidor'
             });
         }
-    }
-
-    
+    }   
 }
