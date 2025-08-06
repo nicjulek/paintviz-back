@@ -35,7 +35,7 @@ export class PecaRepository {
             console.error('Erro ao criar peça:', error);
             throw new Error('Erro ao criar peça');
         }
-}
+    }
 
     async deletePeca(id_peca: number): Promise<void>{
         try{
