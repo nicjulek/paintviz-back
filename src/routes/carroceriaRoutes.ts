@@ -27,4 +27,57 @@ router.post('/', AuthMiddleware, AdminMiddleware, ValidMiddleware(carroceriaSche
     }
 );
 
+//Listar todas
+router.get('/', AuthMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.listCarrocerias(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Buscar por ID
+router.get('/:id', AuthMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.findById(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+router.get('/nome/:nome_modelo', AuthMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.findByNome(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Atualizar
+router.put('/:id', AuthMiddleware, AdminMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.updateCarroceria(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+router.delete('/:id', AuthMiddleware, AdminMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.deleteCarroceria(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 export default router;
