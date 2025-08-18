@@ -18,6 +18,7 @@ const carroceriaSchema = yup.object({
     diagonal_svg: yup.string().nullable()
 });
 
+// Criar carroceria
 router.post('/', AuthMiddleware, AdminMiddleware, ValidMiddleware(carroceriaSchema),
     async (req, res, next) => {
         try {
@@ -53,5 +54,60 @@ router.put('/:id/salvar-svg/:tipo', async (req, res, next) => {
         next(error);
     }
 });
+
+// Listar todas as carrocerias
+router.get('/', AuthMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.listCarrocerias(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Buscar carroceria por ID
+router.get('/:id', AuthMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.findById(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Buscar carroceria por nome
+router.get('/nome/:nome_modelo', AuthMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.findByNome(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Atualizar carroceria
+router.put('/:id', AuthMiddleware, AdminMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.updateCarroceria(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Deletar carroceria
+router.delete('/:id', AuthMiddleware, AdminMiddleware,
+    async (req, res, next) => {
+        try {
+            await carroceriaController.deleteCarroceria(req, res);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 export default router;

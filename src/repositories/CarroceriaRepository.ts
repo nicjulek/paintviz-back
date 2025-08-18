@@ -21,8 +21,7 @@ export class CarroceriaRepository {
             console.error("Erro ao criar carroceria:", error);
             throw new Error("Erro ao criar carroceria");
         }
-    }
-
+    }    
     async findById(id: number): Promise<Carroceria | undefined> {
         try {
             return await this.db('Carroceria')
@@ -62,11 +61,19 @@ export class CarroceriaRepository {
             await this.db('Carroceria')
                 .where('id_carroceria', id_carroceria)
                 .update(dados);
-
             return await this.findById(id_carroceria);
         } catch (error) {
             console.error('Erro ao atualizar carroceria:', error);
             throw new Error('Erro ao atualizar carroceria');
+        }
+    }
+
+    async listCarrocerias(): Promise<Carroceria[]> {
+        try {
+            return await this.db('Carroceria').select('*');
+        } catch (error) {
+            console.error('Erro ao listar carrocerias:', error);
+            throw new Error('Erro ao listar carrocerias');
         }
     }
 
