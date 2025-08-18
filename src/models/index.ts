@@ -9,6 +9,17 @@ export interface Administrador {
   id_usuario: number;
 }
 
+export interface UsuarioAutenticado {
+  id: number;
+  nome: string;
+  isAdmin: boolean;
+}
+
+import { Request } from 'express';
+export interface AuthRequest extends Request {
+  user?: UsuarioAutenticado;
+}
+
 // ========= PALETA =========
 export interface Paleta {
   id_paleta?: number;
