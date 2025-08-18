@@ -23,14 +23,6 @@ export class CarroceriaRepository {
         }
     }
 
-    // async deleteCarroceria(id: number): Promise<void> {
-        
-    // }
-
-    // async updateCarroceria(id: number, carroceria: Partial<Carroceria>): Promise<boolean> {
-
-    // }
-
     async findById(id: number): Promise<Carroceria | undefined> {
         try {
             return await this.db('Carroceria')
@@ -53,8 +45,41 @@ export class CarroceriaRepository {
         }
     }
 
-    // async listCarrocerias(): Promise<Carroceria[]> {
+    async deleteCarroceria(id_carroceria: number): Promise<boolean> {
+        try {
+            const deleted = await this.db('Carroceria')
+                .where('id_carroceria', id_carroceria)
+                .del();
+            return deleted > 0;
+        } catch (error) {
+            console.error('Erro ao deletar carroceria:', error);
+            return false;
+        }
+    }
 
-    // }
- }
+    async updateCarroceria(id_carroceria: number, dados: Partial<Carroceria>): Promise<Carroceria | undefined> {
+        try {
+            await this.db('Carroceria')
+                .where('id_carroceria', id_carroceria)
+                .update(dados);
 
+            return await this.findById(id_carroceria);
+        } catch (error) {
+            console.error('Erro ao atualizar carroceria:', error);
+            throw new Error('Erro ao atualizar carroceria');
+        }
+    }
+
+    async salvarSvgPintado(id_carroceria: number, tipo: 'lateral' | 'traseira' | 'diagonal', svg_pintado: string): Promise<boolean> {
+        try {
+            const coluna = `${tipo}_svg`;
+            const updated = await this.db('Carroceria')
+                .where('id_carroceria', id_carroceria)
+                .update({ [coluna]: svg_pintado });
+            return updated > 0;
+        } catch (error) {
+            console.error('Erro ao salvar SVG pintado da carroceria:', error);
+            return false;
+        }
+    }
+}

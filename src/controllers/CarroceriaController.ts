@@ -1,14 +1,16 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { CarroceriaRepository } from "../repositories/CarroceriaRepository";
-import { dbConnection } from "config/database";
-import { AuthRequest } from "models";
+import { PecaRepository } from "../repositories/PecaRepository";
+import { AuthRequest } from "../models";
 
 @injectable()
 export class CarroceriaController {
     constructor(
         @inject('CarroceriaRepository')
-        private carroceriaRepository: CarroceriaRepository
+        private carroceriaRepository: CarroceriaRepository,
+        @inject('PecaRepository')
+        private pecaRepository: PecaRepository
     ) {}
 
     async createCarroceria(req: AuthRequest, res: Response) {
@@ -41,5 +43,67 @@ export class CarroceriaController {
                 error: 'Erro interno do servidor'
             });
         }
+    }
+
+    // Aplica múltiplas cores no SVG da carroceria e retorna as peças pintadas (apenas id e cor)
+    async aplicarCoresNaCarroceria(req: Request, res: Response) {
+        try {
+            const { svg_carroceria, cores_pecas, id_carroceria } = req.body;
+
+            if (!svg_carroceria || !Array.isArray(cores_pecas) || !id_carroceria) {
+                return res.status(400).json({
+                    error: 'svg_carroceria, cores_pecas (array) e id_carroceria são obrigatórios'
+                });
+            }
+
+            // Buscar peças cadastradas para a carroceria
+            const pecas = await this.pecaRepository.listPecasPorModelo(id_carroceria);
+            const idsValidos = pecas.map(p => p.id_svg);
+
+            // Pintar SVG da carroceria (apenas peças cadastradas)
+            let svgCarroceriaPintado = svg_carroceria;
+            for (const corPeca of cores_pecas) {
+                if (idsValidos.includes(corPeca.id_svg)) {
+                    svgCarroceriaPintado = aplicarCorNoSvg(svgCarroceriaPintado, corPeca.id_svg, corPeca.cod_cor);
+                }
+            }
+
+            // Retorna apenas id_peca, id_svg e cor aplicada
+            const pecasPintadas = [];
+            for (const peca of pecas) {
+                const corPeca = cores_pecas.find(cp => cp.id_svg === peca.id_svg);
+                if (corPeca) {
+                    pecasPintadas.push({
+                        id_peca: peca.id_peca,
+                        id_svg: peca.id_svg,
+                        cor_aplicada: corPeca.cod_cor
+                    });
+                }
+            }
+
+            return res.status(200).json({
+                message: 'Cores aplicadas nas peças e carroceria',
+                svg_carroceria_pintado: svgCarroceriaPintado,
+                pecas_pintadas: pecasPintadas
+            });
+
+        } catch (error) {
+            console.error('Erro ao aplicar cores na carroceria:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+}
+
+// Função utilitária para aplicar cor no SVG
+function aplicarCorNoSvg(svgOriginal: string, idPeca: string, codCor: string): string {
+    try {
+        const regex = new RegExp(`(<[^>]+id="${idPeca}"[^>]*)(fill="[^"]*")?([^>]*>)`, 'gi');
+        return svgOriginal.replace(regex, (match, before, fillAttr, after) => {
+            let novo = before.replace(/fill="[^"]*"/gi, '');
+            return `${novo} fill="${codCor}"${after}`;
+        });
+    } catch (error) {
+        console.error('Erro ao aplicar cor no SVG:', error);
+        return svgOriginal;
     }
 }

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { CarroceriaController } from "../controllers/CarroceriaController";
+import { CarroceriaRepository } from "../repositories/CarroceriaRepository";
 import { AdminMiddleware, AuthMiddleware } from "../middleware/AuthMiddleware";
 import { ValidMiddleware } from "../middleware/ValidMiddleware";
 import { container } from "tsyringe";
@@ -26,5 +27,31 @@ router.post('/', AuthMiddleware, AdminMiddleware, ValidMiddleware(carroceriaSche
         }
     }
 );
+
+// Aplica múltiplas cores no SVG da carroceria
+router.post('/aplicar-cores', async (req, res, next) => {
+    try {
+        await carroceriaController.aplicarCoresNaCarroceria(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Salvar SVG pintado da carroceria
+router.put('/:id/salvar-svg/:tipo', async (req, res, next) => {
+    try {
+        const { id, tipo } = req.params;
+        const { svg_pintado } = req.body;
+        const repo = container.resolve(CarroceriaRepository);
+        const ok = await repo.salvarSvgPintado(Number(id), tipo as 'lateral' | 'traseira' | 'diagonal', svg_pintado);
+        if (ok) {
+            res.status(200).json({ message: 'SVG pintado salvo com sucesso' });
+        } else {
+            res.status(500).json({ error: 'Erro ao salvar SVG pintado' });
+        }
+    } catch (error) {
+        next(error);
+    }
+});
 
 export default router;
