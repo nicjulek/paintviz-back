@@ -14,10 +14,19 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-// Deleta
-router.delete('/:id', async (req, res, next) => {
+// NOVO: Aplicar cor em uma peça específica
+router.post('/:id_peca/aplicar-cor', async (req, res, next) => {
     try {
-        await pecaController.deletePeca(req, res);
+        await pecaController.aplicarCorNaPeca(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// NOVO: Aplicar múltiplas cores no SVG
+router.post('/aplicar-multiplas-cores', async (req, res, next) => {
+    try {
+        await pecaController.aplicarMultiplasCores(req, res);
     } catch (error) {
         next(error);
     }
@@ -45,6 +54,15 @@ router.get('/:id', async (req, res, next) => {
 router.put('/:id', async (req, res, next) => {
     try {
         await pecaController.updatePeca(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Deleta
+router.delete('/:id', async (req, res, next) => {
+    try {
+        await pecaController.deletePeca(req, res);
     } catch (error) {
         next(error);
     }

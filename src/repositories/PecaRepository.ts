@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { dbConnection } from "../config/database";
-import {Peca} from "../models";
+import { Peca } from "../models";
 
 @injectable()
 export class PecaRepository {
@@ -14,35 +14,34 @@ export class PecaRepository {
                 nome_peca: peca.nome_peca,
                 id_svg: peca.id_svg,
                 id_carroceria: peca.id_carroceria,
-                id_pintura: null,
-                id_cor: null,
-        });
+                id_pintura: peca.id_pintura || null,
+                id_cor: peca.id_cor || null,
+            });
 
             await trx.commit();
 
             return {
-            id_peca: id,
-            nome_peca: peca.nome_peca,
-            id_svg: peca.id_svg,
-            id_carroceria: peca.id_carroceria,
-            id_pintura: null,
-            id_cor: null,
+                id_peca: id,
+                nome_peca: peca.nome_peca,
+                id_svg: peca.id_svg,
+                id_carroceria: peca.id_carroceria,
+                id_pintura: peca.id_pintura || null,
+                id_cor: peca.id_cor || null,
             };
 
         } catch (error) {
-
             await trx.rollback();
             console.error('Erro ao criar peça:', error);
             throw new Error('Erro ao criar peça');
         }
-}
+    }
 
-    async deletePeca(id_peca: number): Promise<void>{
-        try{
+    async deletePeca(id_peca: number): Promise<void> {
+        try {
             await this.db('Peca')
                 .where('id_peca', id_peca)
-                .del()
-        } catch (error){
+                .del();
+        } catch (error) {
             console.error("Erro ao deletar peça: ", error);
             throw new Error("Erro ao deletar peça");
         }
@@ -51,8 +50,8 @@ export class PecaRepository {
     async listPecasPorModelo(id_carroceria: number): Promise<Peca[]> {
         try {
             const pecas = await this.db('Peca')
-            .select('id_peca', 'nome_peca', 'id_svg', 'id_pintura', 'id_carroceria')
-            .where('id_carroceria', id_carroceria);
+                .select('id_peca', 'nome_peca', 'id_svg', 'id_pintura', 'id_carroceria', 'id_cor')
+                .where('id_carroceria', id_carroceria);
 
             return pecas;
 
@@ -67,7 +66,7 @@ export class PecaRepository {
             const peca = await this.db('Peca')
                 .select('id_peca', 'nome_peca', 'id_svg', 'id_pintura', 'id_carroceria', 'id_cor')
                 .where({ id_peca })
-                .first(); 
+                .first();
 
             return peca;
 
@@ -77,16 +76,24 @@ export class PecaRepository {
         }
     }
 
-    async updatePeca(id_peca: number, peca: Partial<Peca>): Promise<Peca | undefined>{
-        try{
+    async updatePeca(id_peca: number, peca: Partial<Peca>): Promise<Peca | undefined> {
+        try {
             const updateData: any = {};
 
-            if(peca.nome_peca){
+            if (peca.nome_peca) {
                 updateData.nome_peca = peca.nome_peca;
             }
 
-            if(peca.id_svg){
+            if (peca.id_svg) {
                 updateData.id_svg = peca.id_svg;
+            }
+
+            if (peca.id_cor !== undefined) {
+                updateData.id_cor = peca.id_cor;
+            }
+
+            if (peca.id_pintura !== undefined) {
+                updateData.id_pintura = peca.id_pintura;
             }
 
             await this.db('Peca')
@@ -95,11 +102,46 @@ export class PecaRepository {
 
             return await this.findPecaById(id_peca);
 
-        } catch(error){
+        } catch (error) {
             console.error('Erro ao atualizar peça: ', error);
             throw new Error('Erro ao atualizar peça');
         }
     }
 
+    // Buscar cor por ID
+    async findCorById(id_cor: number): Promise<any> {
+        try {
+            return await this.db('Cor')
+                .select('id_cor', 'nome_cor', 'cod_cor')
+                .where('id_cor', id_cor)
+                .first();
+        } catch (error) {
+            console.error('Erro ao buscar cor:', error);
+            throw new Error('Erro ao buscar cor');
+        }
+    }
 
+    // Listar peças com suas cores
+    async listPecasComCores(id_carroceria: number): Promise<any[]> {
+        try {
+            const pecasComCores = await this.db('Peca')
+                .leftJoin('Cor', 'Peca.id_cor', 'Cor.id_cor')
+                .select(
+                    'Peca.id_peca',
+                    'Peca.nome_peca',
+                    'Peca.id_svg',
+                    'Peca.id_carroceria',
+                    'Peca.id_pintura',
+                    'Peca.id_cor',
+                    'Cor.nome_cor',
+                    'Cor.cod_cor'
+                )
+                .where('Peca.id_carroceria', id_carroceria);
+
+            return pecasComCores;
+        } catch (error) {
+            console.error("Erro ao listar peças com cores:", error);
+            throw new Error("Erro ao listar peças com cores");
+        }
+    }
 }
