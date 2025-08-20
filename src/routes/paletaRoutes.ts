@@ -5,7 +5,7 @@ import { container } from "tsyringe";
 const router = Router();
 const paletaController = container.resolve(PaletaController);
 
-// Cria 
+// Criar paleta
 router.post('/', async (req, res, next) => {
     try {
         await paletaController.createPaleta(req, res);
@@ -14,16 +14,7 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-// Deleta
-router.delete('/:id', async (req, res, next) => {
-    try {
-        await paletaController.deletePaleta(req, res);
-    } catch (error) {
-        next(error);
-    }
-});
-
-// Lista 
+// Listar paletas
 router.get('/', async (req, res, next) => {
     try {
         await paletaController.listPaletas(req, res);
@@ -32,7 +23,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-// Busca por ID
+// Buscar paleta por ID
 router.get('/:id', async (req, res, next) => {
     try {
         await paletaController.findPaletaById(req, res);
@@ -41,10 +32,48 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-// Atualiza 
+// Atualizar paleta
 router.put('/:id', async (req, res, next) => {
     try {
         await paletaController.updatePaleta(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Deletar paleta
+router.delete('/:id', async (req, res, next) => {
+    try {
+        await paletaController.deletePaleta(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// ===== ROTAS PARA GERENCIAR CORES DA PALETA =====
+
+// Adicionar cor à paleta
+router.post('/:id/cores', async (req, res, next) => {
+    try {
+        await paletaController.addCorToPaleta(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Listar cores de uma paleta
+router.get('/:id/cores', async (req, res, next) => {
+    try {
+        await paletaController.getCoresDaPaleta(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Remover cor da paleta
+router.delete('/:id/cores/:id_cor', async (req, res, next) => {
+    try {
+        await paletaController.removeCorFromPaleta(req, res);
     } catch (error) {
         next(error);
     }

@@ -5,7 +5,7 @@ import { container } from "tsyringe";
 const router = Router();
 const corController = container.resolve(CorController);
 
-// Cria 
+// Criar cor
 router.post('/', async (req, res, next) => {
     try {
         await corController.createCor(req, res);
@@ -14,25 +14,16 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-// Deleta
-router.delete('/:id', async (req, res, next) => {
-    try {
-        await corController.deleteCor(req, res);
-    } catch (error) {
-        next(error);
-    }
-});
-
-// Lista 
+// Listar cores
 router.get('/', async (req, res, next) => {
     try {
-        await corController.listCoresPorPaleta(req, res);
+        await corController.listCores(req, res);
     } catch (error) {
         next(error);
     }
 });
 
-// Busca por ID
+// Buscar cor por ID
 router.get('/:id', async (req, res, next) => {
     try {
         await corController.findCorById(req, res);
@@ -41,10 +32,19 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-// Atualiza 
+// Atualizar cor
 router.put('/:id', async (req, res, next) => {
     try {
         await corController.updateCor(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Deletar cor
+router.delete('/:id', async (req, res, next) => {
+    try {
+        await corController.deleteCor(req, res);
     } catch (error) {
         next(error);
     }
