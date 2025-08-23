@@ -62,9 +62,9 @@ export class OrdemDeServicoRepository {
         }
     }
 
-    async findByCliente(id_cliente: number): Promise<OrdemDeServico | undefined> {
+    async findByCliente(id_cliente: number): Promise<OrdemDeServico[] | undefined> {
         try {
-            return await this.db('OrdemDeServico').where('id_cliente', id_cliente).first();
+            return await this.db('OrdemDeServico').where('id_cliente', id_cliente);
         } catch (error) {
             console.error('Erro ao buscar ordem de serviço por cliente:', error);
             throw new Error('Erro ao buscar ordem por cliente');
@@ -95,15 +95,15 @@ export class OrdemDeServicoRepository {
                 updateData.numero_box = ordemDeServico.numero_box;
             }
 
-            if(ordemDeServico.id_cliente){
+            if(ordemDeServico.id_cliente !== undefined){
                 updateData.id_cliente = ordemDeServico.id_cliente;
             }
 
-            if(ordemDeServico.id_usuario_responsavel){
+            if(ordemDeServico.id_usuario_responsavel !== undefined){
                 updateData.id_usuario_responsavel = ordemDeServico.id_usuario_responsavel;
             }
 
-            if(ordemDeServico.id_status){
+            if(ordemDeServico.id_status !== undefined){
                 updateData.id_status = ordemDeServico.id_status;
             }
 
