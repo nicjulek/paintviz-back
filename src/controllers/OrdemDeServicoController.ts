@@ -14,7 +14,7 @@ constructor(
         private clienteRepository: ClienteRepository,
         @inject('PinturaRepository')
         private pinturaRepository: PinturaRepository,
-        @inject('StatusRepositoy')
+        @inject('StatusRepository')
         private statusRepository: StatusRepository
     ) {}
 
