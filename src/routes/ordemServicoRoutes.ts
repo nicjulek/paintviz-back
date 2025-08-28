@@ -32,6 +32,15 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+
+router.get('/cliente/:id_cliente', async (req, res, next) => {
+    try {
+        await ordemDeServicoController.findByCliente(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // Busca por ID
 router.get('/:id', async (req, res, next) => {
     try {
@@ -41,13 +50,6 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-router.get('/cliente/:id_cliente', async (req, res, next) => {
-    try {
-        await ordemDeServicoController.findByCliente(req, res);
-    } catch (error) {
-        next(error);
-    }
-});
 
 // Atualiza 
 router.put('/:id', async (req, res, next) => {
