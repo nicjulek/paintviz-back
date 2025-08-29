@@ -18,27 +18,19 @@ constructor(
         private statusRepository: StatusRepository
     ) {}
 
-    private STATUS = {  //para teste com enum
+    /*private STATUS = {  //para teste com enum
         PRE_ORDEM: 0,
         ORDEM_ABERTA: 2,
         EM_PRODUCAO: 3,
         FINALIZADA: 4,
         CANCELADA: 5
-    } as const;
+    } as const;*/
 
     async createOrdemDeServico(req: Request, res: Response){
         try {
             const { identificacao_veiculo, data_emissao, data_entrega, data_programada, modelo_veiculo, placa_veiculo, numero_box, id_cliente, id_usuario_responsavel, id_status, id_pintura, data_ultima_modificacao } = req.body;
 
-            const cliente = await this.clienteRepository.findClienteById(Number(id_cliente));
-            if (!cliente) {
-                return res.status(404).json({ error: "Cliente não encontrado." });
-            }
-
-            const pintura = await this.pinturaRepository.pinturaExists(Number(id_pintura));
-            if(!pintura){
-                return res.status(404).json({ error: "Pintura não existe. "});
-            }
+            
 
             if (!data_emissao || !modelo_veiculo || !id_cliente || !id_usuario_responsavel || !id_status || !id_pintura || !data_ultima_modificacao) {
                 return res.status(400).json({
@@ -46,7 +38,7 @@ constructor(
                 });
             }
             //para pegar status do banco
-            /*const status = await this.statusRepository.findById(id_status);  //Supondo q id_status 0 é pré ordem
+            const status = await this.statusRepository.findById(id_status);  //Supondo q id_status 0 é pré ordem
             if (!status) {
                 return res.status(400).json({ error: "Status inválido." });
             }
@@ -65,9 +57,20 @@ constructor(
 
             if (status.descricao !== "em_produção" && numero_box) {
                 return res.status(400).json({ error: "Numero box somente permitido em ordem em produção." });
-            }*/
+            }
 
-            
+            const cliente = await this.clienteRepository.findClienteById(Number(id_cliente));
+            if (!cliente) {
+                return res.status(404).json({ error: "Cliente não encontrado." });
+            }
+
+            const pintura = await this.pinturaRepository.pinturaExists(Number(id_pintura));
+            if(!pintura){
+                return res.status(404).json({ error: "Pintura não existe. "});
+            }
+
+            //Status com enum
+            /* 
             if (Number(id_status) === this.STATUS.PRE_ORDEM && (data_entrega || identificacao_veiculo || data_programada || placa_veiculo || numero_box)) {
                 return res.status(400).json({ error: "Somente informações mínimas de pré-ordem são permitidas." });
             }
@@ -82,7 +85,7 @@ constructor(
 
             if (Number(id_status) !== this.STATUS.EM_PRODUCAO && numero_box) {
                 return res.status(400).json({ error: "Numero box somente permitido em ordem em produção." });
-            }
+            }*/
 
             const novaOrdem = await this.ordemDeServicoRepository.createOrdemDeServico({
                 identificacao_veiculo,

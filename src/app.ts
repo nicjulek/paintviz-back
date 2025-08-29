@@ -12,6 +12,7 @@ app.use(cors({
         'http://127.0.0.1:3000',
         'http://localhost:3333',
         'http://localhost:3002',
+        'http://localhost:3001',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
