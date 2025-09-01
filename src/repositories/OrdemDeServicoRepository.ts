@@ -53,6 +53,26 @@ export class OrdemDeServicoRepository {
         }
     }
 
+    async listOrdensParaGaleria(): Promise<any[]> { 
+        try {
+            const ordens = await this.db('OrdemDeServico as os')
+                .join('Cliente as c', 'os.id_cliente', '=', 'c.id_cliente')
+                .join('Status as s', 'os.id_status', '=', 's.id_status')
+                .join('Pintura as p', 'os.id_pintura', '=', 'p.id_pintura')
+                .select(
+                    'os.id_ordem_servico as idordem',
+                    's.descricao as status',
+                    'c.nome as nome',
+                    'os.data_entrega as entrega',
+                    'p.pintura_svg_lateral as imgpintura'
+                );
+            return ordens;
+        } catch (error) {
+            console.error('Erro ao listar ordens de servico:', error);
+            throw new Error('Erro ao acessar banco de dados');
+        }
+    }
+
     async findById(id_ordem_servico: number): Promise<OrdemDeServico | undefined> {
         try {
             return await this.db('OrdemDeServico').where('id_ordem_servico', id_ordem_servico).first();

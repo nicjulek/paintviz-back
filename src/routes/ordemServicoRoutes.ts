@@ -32,6 +32,15 @@ router.get('/', async (req, res, next) => {
     }
 });
 
+// Rota para a lista da galeria
+router.get('/galeria', async (req, res, next) => {
+    try{
+        await ordemDeServicoController.listOrdensParaGaleria(req, res);
+    } catch(error){
+        next(error);
+    }
+    
+});
 
 router.get('/cliente/:id_cliente', async (req, res, next) => {
     try {

@@ -43,19 +43,19 @@ constructor(
                 return res.status(400).json({ error: "Status inválido." });
             }
 
-            if (status.id_status === 0 && (data_entrega || identificacao_veiculo || data_programada || placa_veiculo || numero_box)) {
+            if (status.id_status === 1 && (data_entrega || identificacao_veiculo || data_programada || placa_veiculo || numero_box)) {
                 return res.status(400).json({ error: "Somente informações mínimas de pré-ordem são permitidas." });
             }
 
-            if (status.id_status !== 0 && (!data_entrega || !identificacao_veiculo || !data_programada || !placa_veiculo)) {
+            if (status.id_status !== 1 && (!data_entrega || !identificacao_veiculo || !data_programada || !placa_veiculo)) {
                 return res.status(400).json({ error: "Ordem de serviço necessita de todas as informações preenchidas." });
             }
 
-            if (status.descricao === "em_produção" && !numero_box) {
+            if (status.id_status === 3 && !numero_box) {
                 return res.status(400).json({ error: "Numero box é obrigatório para ordem em produção." });
             }
 
-            if (status.descricao !== "em_produção" && numero_box) {
+            if (status.id_status !== 3 && numero_box) {
                 return res.status(400).json({ error: "Numero box somente permitido em ordem em produção." });
             }
 
@@ -128,6 +128,16 @@ constructor(
             return res.status(200).json(ordens);
         } catch (error) {
             console.log('Erro ao listar ordens de serviço:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    async listOrdensParaGaleria(req: Request, res: Response) {
+        try {
+            const ordens = await this.ordemDeServicoRepository.listOrdensParaGaleria();
+            return res.status(200).json(ordens);
+        } catch (error) {
+            console.log('Erro ao listar ordens para galeria:', error);
             return res.status(500).json({ error: 'Erro interno do servidor' });
         }
     }
