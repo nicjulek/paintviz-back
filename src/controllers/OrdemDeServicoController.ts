@@ -133,14 +133,17 @@ constructor(
     }
 
     async listOrdensParaGaleria(req: Request, res: Response) {
-        try {
-            const ordens = await this.ordemDeServicoRepository.listOrdensParaGaleria();
-            return res.status(200).json(ordens);
-        } catch (error) {
-            console.log('Erro ao listar ordens para galeria:', error);
-            return res.status(500).json({ error: 'Erro interno do servidor' });
-        }
+    try {
+
+        const filtros = req.query;
+        const ordens = await this.ordemDeServicoRepository.listOrdensParaGaleria(filtros);
+        
+        return res.status(200).json(ordens);
+    } catch (error) {
+        console.log('Erro ao listar ordens para galeria:', error);
+        return res.status(500).json({ error: 'Erro interno do servidor' });
     }
+}
 
     async findById(req: Request, res: Response){
         try {
