@@ -53,7 +53,7 @@ export class OrdemDeServicoRepository {
         }
     }
 
-async listOrdensParaGaleria(filtros?: { status?: string; nomeCliente?: string }): Promise<any[]> {
+async listOrdensParaGaleria(filtros?: { status?: string; nomeCliente?: string; ordenarPorData?: 'recente' | 'antiga' }): Promise<any[]>  {
     try {
         const query = this.db('OrdemDeServico as os')
             .join('Cliente as c', 'os.id_cliente', '=', 'c.id_cliente')
@@ -73,11 +73,16 @@ async listOrdensParaGaleria(filtros?: { status?: string; nomeCliente?: string })
             });
         }
 
+        if (filtros && filtros.ordenarPorData) {
+            const direcao = filtros.ordenarPorData === 'recente' ? 'desc' : 'asc';
+            query.orderBy('os.data_programada', direcao);
+        }
+
         const ordens = await query.select(
             'os.id_ordem_servico as idordem',
             's.descricao as status',
             this.db.raw('COALESCE(f.nome, j.empresa) as nome'),
-            'os.data_entrega as entrega',
+            'os.data_programada as entrega',
             'p.pintura_svg_lateral as imgpintura'
         );
 
