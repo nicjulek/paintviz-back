@@ -102,6 +102,50 @@ async listOrdensParaGaleria(filtros?: { status?: string; nomeCliente?: string; o
         }
     }
 
+    async findDetailedById(id_ordem_servico: number): Promise<any | undefined> {
+        try {
+            const ordem = await this.db('OrdemDeServico as os')
+                .leftJoin('Cliente as c', 'os.id_cliente', '=', 'c.id_cliente')
+                .leftJoin('Fisico as f', 'c.id_cliente', '=', 'f.id_cliente')
+                .leftJoin('Juridico as j', 'c.id_cliente', '=', 'j.id_cliente')
+                .leftJoin('Status as s', 'os.id_status', '=', 's.id_status')
+                .leftJoin('Usuario as u', 'os.id_usuario_responsavel', '=', 'u.id_usuario')
+                .leftJoin('Pintura as p', 'os.id_pintura', '=', 'p.id_pintura')
+                .leftJoin('Carroceria as car', 'p.id_carroceria', '=', 'car.id_carroceria')
+                .where('os.id_ordem_servico', id_ordem_servico)
+                .select(
+                    // Informações do Cliente
+                    this.db.raw('COALESCE(f.nome, j.empresa) as cliente_nome'),
+                    'f.cpf as cliente_cpf',
+                    'j.cnpj as cliente_cnpj',
+                    'c.email as cliente_email',
+                    'c.celular as cliente_celular',
+                    // Detalhes do Veículo
+                    'os.modelo_veiculo',
+                    'os.placa_veiculo',
+                    'os.identificacao_veiculo',
+                    // Datas e Status
+                    'os.data_emissao',
+                    'os.data_entrega',
+                    'os.data_programada',
+                    'u.nome as usuario_responsavel',
+                    's.descricao as status_descricao',
+                    'os.numero_box',
+                    // Pintura e Carroceria
+                    'car.nome_modelo as carroceria_nome',
+                    'p.pintura_svg_lateral',
+                    'p.pintura_svg_traseira',
+                    'p.pintura_svg_diagonal'
+                )
+                .first(); // .first() para pegar apenas um resultado
+            
+            return ordem;
+        } catch (error) {
+            console.error('Erro ao buscar detalhes da ordem por id:', error);
+            throw new Error('Erro ao buscar detalhes da ordem');
+        }
+    }
+
     async findByCliente(id_cliente: number): Promise<OrdemDeServico[] | undefined> {
         try {
             return await this.db('OrdemDeServico').where('id_cliente', id_cliente);

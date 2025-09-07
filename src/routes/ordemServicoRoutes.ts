@@ -59,6 +59,13 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+router.get('/:id/detalhes', async (req, res, next) => {
+    try {
+        await ordemDeServicoController.findDetailedById(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
 
 // Atualiza 
 router.put('/:id', async (req, res, next) => {

@@ -178,6 +178,22 @@ constructor(
         }
     }
 
+    async findDetailedById(req: Request, res: Response) {
+        try {
+            const id = parseInt(req.params.id);
+
+            const ordem = await this.ordemDeServicoRepository.findDetailedById(id); 
+
+            if (!ordem) {
+                return res.status(404).json({ error: "Ordem de serviço não encontrada" });
+            }
+            return res.status(200).json(ordem);
+        } catch (error) {
+            console.error("Erro no controller ao buscar detalhes da ordem:", error);
+            return res.status(500).json({ error: "Erro ao buscar detalhes da ordem" });
+        }
+    }
+
     async updateOrdemDeServico(req: Request, res: Response){
         try {
             const id = parseInt(req.params.id);
