@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { CarroceriaRepository } from "../repositories/CarroceriaRepository";
+import { PecaRepository } from "../repositories/PecaRepository";
+import { AuthRequest } from "../models";
 
 @injectable()
 export class CarroceriaController {

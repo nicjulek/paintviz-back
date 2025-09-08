@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PecaRepository } from "repositories/PecaRepository";
+import { PecaRepository } from "../repositories/PecaRepository";
 import { inject, injectable } from "tsyringe";
 
 @injectable()
@@ -37,6 +37,8 @@ export class PecaController {
         }
     }
 
+    // Aplica cor em uma peça específica do SVG
+    // ...existing code...
     async aplicarCorNaPeca(req: Request, res: Response) {
         try {
             const { id_peca } = req.params;
@@ -84,7 +86,51 @@ export class PecaController {
             });
 
         } catch (error) {
+            console.error('Erro ao aplicar cor na peça:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+    // ...existing code...
 
+    // Aplica múltiplas cores no SVG
+    async aplicarMultiplasCores(req: Request, res: Response) {
+        try {
+            const { svg_carroceria, cores_pecas } = req.body;
+
+            if (!svg_carroceria || !Array.isArray(cores_pecas)) {
+                return res.status(400).json({
+                    error: 'svg_carroceria e cores_pecas (array) são obrigatórios'
+                });
+            }
+
+            let svgAtualizado = svg_carroceria;
+            for (const corPeca of cores_pecas) {
+                if (corPeca.id_svg && corPeca.cod_cor) {
+                    svgAtualizado = aplicarCorNoSvg(svgAtualizado, corPeca.id_svg, corPeca.cod_cor);
+                }
+            }
+
+            return res.status(200).json({
+                message: 'Cores aplicadas com sucesso',
+                svg_pintado: svgAtualizado,
+                cores_aplicadas: cores_pecas.length
+            });
+
+        } catch (error) {
+            console.error('Erro ao aplicar múltiplas cores:', error);
+            return res.status(500).json({ error: 'Erro interno do servidor' });
+        }
+    }
+
+    // ...outros métodos existentes...
+    async deletePeca(req: Request, res: Response) {
+        try {
+            const id = parseInt(req.params.id);
+            await this.pecaRepository.deletePeca(id);
+            return res.status(204).send();
+        } catch (error) {
+            console.error("Erro no controller ao deletar peça:", error);
+            return res.status(500).json({ error: "Erro ao deletar peça" });
         }
     }
 
@@ -135,5 +181,22 @@ export class PecaController {
             console.error("Erro no controller ao atualizar peça:", error);
             return res.status(500).json({ error: "Erro ao atualizar peça" });
         }
+    }
+}
+
+// Função utilitária para aplicar cor no SVG
+function aplicarCorNoSvg(svgOriginal: string, idPeca: string, codCor: string): string {
+    try {
+        // Regex para encontrar o elemento pelo id e modificar o fill
+        const regex = new RegExp(`(<[^>]+id="${idPeca}"[^>]*)(fill="[^"]*")?([^>]*>)`, 'gi');
+        return svgOriginal.replace(regex, (match, before, fillAttr, after) => {
+            // Remove fill existente
+            let novo = before.replace(/fill="[^"]*"/gi, '');
+            // Adiciona novo fill
+            return `${novo} fill="${codCor}"${after}`;
+        });
+    } catch (error) {
+        console.error('Erro ao aplicar cor no SVG:', error);
+        return svgOriginal;
     }
 }

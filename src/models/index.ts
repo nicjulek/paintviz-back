@@ -30,7 +30,6 @@ export interface Cor {
   id_cor?: number;
   nome_cor: string;
   cod_cor: string;
-  id_paleta: number;
 }
 
 export interface PaletaCor {
