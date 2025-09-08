@@ -50,4 +50,22 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
+// Deleta
+router.delete('/:id', async (req, res, next) => {
+    try {
+        await pecaController.deletePeca(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+router.put('/:id_peca/cor', async (req, res, next) => {
+    try {
+        await pecaController.aplicarCorNaPeca(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
 export default router;

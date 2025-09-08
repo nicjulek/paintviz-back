@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PinturaRepository } from "../repositories/PinturaRepository";
 import { inject, injectable } from "tsyringe";
+import { setCadastroOrdemBloqueado } from "./OrdemDeServicoController";
 
 @injectable()
 export class PinturaController {
@@ -27,7 +28,13 @@ export class PinturaController {
                 id_usuario: Number(id_usuario)
             });
 
-            return res.status(201).json(novaPintura);
+            setCadastroOrdemBloqueado(false); // desbloqueia cadastro de ordem
+
+            return res.status(201).json({
+                id_pintura: novaPintura.id_pintura,
+                pintura: novaPintura,
+                message: "Pintura criada. Cadastro de ordem liberado."
+            });
         } catch (error) {
             console.error('Erro no controller:', error);
             return res.status(500).json({ error: 'Erro interno do servidor' });
@@ -46,7 +53,7 @@ export class PinturaController {
             }
 
             const deleted = await this.pinturaRepository.deletePintura(Number(id));
-
+            
             if (!deleted) {
                 return res.status(500).json({ error: 'Erro ao deletar pintura' });
             }
