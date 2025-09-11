@@ -11,7 +11,7 @@ export class CarroceriaController {
         private carroceriaRepository: CarroceriaRepository,
         @inject('PecaRepository')
         private pecaRepository: PecaRepository
-    ) {}
+    ) { }
 
     async createCarroceria(req: AuthRequest, res: Response) {
         try {
@@ -19,6 +19,9 @@ export class CarroceriaController {
 
             if (!nome_modelo || nome_modelo.trim().length === 0) {
                 return res.status(400).json({ error: 'Nome do modelo é obrigatório' });
+            }
+            if (!lateral_svg || !traseira_svg || !diagonal_svg) {
+                return res.status(400).json({ error: 'Todos os arquivos SVG são obrigatórios.' });
             }
 
             const carroceriaExistente = await this.carroceriaRepository.findByNome(nome_modelo);
@@ -28,9 +31,9 @@ export class CarroceriaController {
 
             const novaCarroceria = await this.carroceriaRepository.createCarroceria({
                 nome_modelo: nome_modelo.trim(),
-                lateral_svg: lateral_svg || null,
-                traseira_svg: traseira_svg || null,
-                diagonal_svg: diagonal_svg || null
+                lateral_svg,
+                traseira_svg,
+                diagonal_svg
             });
 
             return res.status(201).json({
@@ -44,6 +47,7 @@ export class CarroceriaController {
             });
         }
     }
+
     // Aplica múltiplas cores no SVG da carroceria e retorna as peças pintadas (apenas id e cor)
     async aplicarCoresNaCarroceria(req: Request, res: Response) {
         try {
@@ -102,8 +106,8 @@ export class CarroceriaController {
 
             await this.carroceriaRepository.deleteCarroceria(Number(id));
 
-            return res.status(200).json({ 
-                message: 'Carroceria deletada com sucesso' 
+            return res.status(200).json({
+                message: 'Carroceria deletada com sucesso'
             });
         } catch (error) {
             console.log('Erro ao deletar carroceria:', error);
@@ -161,7 +165,7 @@ export class CarroceriaController {
         }
     }
 
-    async findById(req: Request, res: Response){
+    async findById(req: Request, res: Response) {
         try {
             const { id } = req.params;
 
@@ -182,7 +186,7 @@ export class CarroceriaController {
         }
     }
 
-    async findByNome(req: Request, res: Response){
+    async findByNome(req: Request, res: Response) {
         try {
             const { nome_modelo } = req.params;
 

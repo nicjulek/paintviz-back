@@ -25,7 +25,7 @@ export class OrdemDeServicoController {
     ) { }
 
     private STATUS = {  //para teste com enum
-        PRE_ORDEM: 0,
+        PRE_ORDEM: 1,
         ORDEM_ABERTA: 2,
         EM_PRODUCAO: 3,
         FINALIZADA: 4,
