@@ -64,7 +64,7 @@ DB_NAME=paintviz
 
 # Configurações da Aplicação
 NODE_ENV=development
-PORT=numero_da_porta
+PORT=3333
 ```
 
 ### 4. Configure o banco de dados MySQL
@@ -77,6 +77,26 @@ CREATE DATABASE paintviz CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 #### Execute as migrations:
 ```bash
 npx knex migrate:latest
+```
+
+#### Insira um administrador:
+```bash
+INSERT INTO Usuario (nome, senha) VALUES ('admin', '$2b$10$32pRscUXoIBIprLt9OYlx.WhVW309qhLr17tyz8P/cCy8nSi5euuu');
+INSERT INTO Administrador (id_usuario) VALUES (1);
+```
+Para login no sistema
+- Usuario: admin
+- Senha: 123abc
+
+#### Insira os status:
+```bash
+INSERT INTO Status (descricao, data_definicao_status)
+VALUES 
+    ('Pré-Ordem', CURDATE()),
+    ('Aberta', CURDATE()),
+    ('Em produção', CURDATE()),
+    ('Finalizada', CURDATE()),
+    ('Cancelada', CURDATE());
 ```
 
 ## Como executar
