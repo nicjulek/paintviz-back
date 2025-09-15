@@ -10,7 +10,9 @@ export class CarroceriaController {
         @inject('CarroceriaRepository')
         private carroceriaRepository: CarroceriaRepository,
         @inject('PecaRepository')
-        private pecaRepository: PecaRepository
+        private pecaRepository: PecaRepository,
+        @inject('PinturaRepository')
+        private pinturaRepository?: any // Tornar opcional para evitar erro se não for injetado
     ) { }
 
     async createCarroceria(req: AuthRequest, res: Response) {
@@ -124,13 +126,11 @@ export class CarroceriaController {
                 return res.status(400).json({ error: 'ID da carroceria é obrigatório' });
             }
 
-            // Verifica se existe
             const carroceriaExistente = await this.carroceriaRepository.findById(Number(id));
             if (!carroceriaExistente) {
                 return res.status(404).json({ error: 'Carroceria não encontrada' });
             }
-
-            // Atualiza
+                
             const sucesso = await this.carroceriaRepository.updateCarroceria(Number(id), {
                 nome_modelo: nome_modelo?.trim(),
                 lateral_svg,

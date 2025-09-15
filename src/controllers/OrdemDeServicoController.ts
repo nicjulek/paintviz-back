@@ -24,14 +24,6 @@ export class OrdemDeServicoController {
         private statusRepository: StatusRepository
     ) { }
 
-    private STATUS = {  //para teste com enum
-        PRE_ORDEM: 1,
-        ORDEM_ABERTA: 2,
-        EM_PRODUCAO: 3,
-        FINALIZADA: 4,
-        CANCELADA: 5
-    } as const;
-
     async createOrdemDeServico(req: Request, res: Response) {
         try {
             if (cadastroOrdemBloqueado) {
@@ -45,8 +37,7 @@ export class OrdemDeServicoController {
                     error: 'data_emissao, modelo_veiculo, id_cliente, id_usuario_responsavel, id_status, id_pintura, data_ultima_modificacao são obrigatórios.'
                 });
             }
-            //para pegar status do banco
-            const status = await this.statusRepository.findById(id_status);  //Supondo q id_status 0 é pré ordem
+            const status = await this.statusRepository.findById(id_status);
             if (!status) {
                 return res.status(400).json({ error: "Status inválido." });
             }
@@ -59,12 +50,14 @@ export class OrdemDeServicoController {
                 return res.status(400).json({ error: "Ordem de serviço necessita de todas as informações preenchidas." });
             }
 
-            if (status.descricao === "em_produção" && !numero_box) {
-                return res.status(400).json({ error: "Numero box é obrigatório para ordem em produção." });
-            }
+            console.log("Chegou aqui!", status, numero_box); // Adicione antes das validações
+            console.log("status.id_status:", status.id_status, "| status.descricao:", status.descricao, "| numero_box:", numero_box);
 
-            if (status.descricao !== "em_produção" && numero_box) {
-                return res.status(400).json({ error: "Numero box somente permitido em ordem em produção." });
+            if (Number(status.id_status) === 3 && !numero_box) {
+                return res.status(400).json({ error: "numero_box é obrigatório para ordem em produção." });
+            }
+            if (Number(status.id_status) !== 3 && numero_box) {
+                return res.status(400).json({ error: "Numero box apenas permitido em ordem em produção." });
             }
 
             const cliente = await this.clienteRepository.findClienteById(Number(id_cliente));
@@ -76,24 +69,6 @@ export class OrdemDeServicoController {
             if (!pintura) {
                 return res.status(404).json({ error: "Pintura não existe. " });
             }
-
-            //Status com enum
-            /* 
-            if (Number(id_status) === this.STATUS.PRE_ORDEM && (data_entrega || identificacao_veiculo || data_programada || placa_veiculo || numero_box)) {
-                return res.status(400).json({ error: "Somente informações mínimas de pré-ordem são permitidas." });
-            }
-
-            if (Number(id_status) !== this.STATUS.PRE_ORDEM && (!data_entrega || !identificacao_veiculo || !data_programada || !placa_veiculo)) {
-                return res.status(400).json({ error: "Ordem de serviço necessita de todas as informações preenchidas." });
-            }
-
-            if (Number(id_status) === this.STATUS.EM_PRODUCAO && !numero_box) {
-                return res.status(400).json({ error: "Numero box é obrigatório para ordem em produção." });
-            }
-
-            if (Number(id_status) !== this.STATUS.EM_PRODUCAO && numero_box) {
-                return res.status(400).json({ error: "Numero box somente permitido em ordem em produção." });
-            }*/
 
             const novaOrdem = await this.ordemDeServicoRepository.createOrdemDeServico({
                 identificacao_veiculo,

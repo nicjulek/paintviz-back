@@ -164,4 +164,13 @@ export class PinturaRepository {
             throw new Error('Erro ao buscar dados');
         }
     }
+
+    async deletePinturasPorCarroceria(id_carroceria: number): Promise<number> {
+    try {
+        return await this.db('Pintura').where('id_carroceria', id_carroceria).del();
+    } catch (error) {
+        console.error('Erro ao deletar pinturas associadas:', error);
+        return 0;
+    }
+}
 }

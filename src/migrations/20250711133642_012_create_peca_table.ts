@@ -7,8 +7,8 @@ export async function up(knex: Knex): Promise<void> {
       table.increments('id_peca').primary();
       table.string('nome_peca', 100).notNullable();
       table.string('id_svg', 255).notNullable();
-      table.integer('id_cor').unsigned().nullable();
-      table.integer('id_pintura').unsigned().notNullable();
+      table.integer('id_cor').unsigned();
+      table.integer('id_pintura').unsigned();
       table.integer('id_carroceria').unsigned().notNullable();
       table.foreign('id_cor').references('id_cor').inTable('Cor');
       table.foreign('id_pintura').references('id_pintura').inTable('Pintura');

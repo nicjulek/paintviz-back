@@ -144,4 +144,13 @@ export class PecaRepository {
             throw new Error("Erro ao listar peças com cores");
         }
     }
+
+    async deletePecasPorCarroceria(id_carroceria: number): Promise<number> {
+    try {
+        return await this.db('Peca').where('id_carroceria', id_carroceria).del();
+    } catch (error) {
+        console.error('Erro ao deletar peças associadas:', error);
+        return 0;
+    }
+}
 }

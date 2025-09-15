@@ -7,7 +7,7 @@ export class UsuarioController {
     constructor(
         @inject('UsuarioRepository')
         private usuarioRepository: UsuarioRepository
-    ) {}
+    ) { }
 
     async createUsuario(req: Request, res: Response) {
         try {
@@ -16,6 +16,12 @@ export class UsuarioController {
             if (!nome || !senha) {
                 return res.status(400).json({
                     error: 'Nome e senha são obrigatórios'
+                });
+            }
+
+            if (senha.length < 6 || !/[a-zA-Z]/.test(senha)) {
+                return res.status(400).json({
+                    error: 'A senha deve ter no mínimo 6 caracteres e conter pelo menos uma letra.'
                 });
             }
 
@@ -152,7 +158,7 @@ export class UsuarioController {
 
             if (typeof isAdmin === 'boolean') {
                 const currentlyAdmin = await this.usuarioRepository.isAdmin(Number(id));
-                
+
                 if (isAdmin && !currentlyAdmin) {
                     await this.usuarioRepository.createAdmin(Number(id));
                 } else if (!isAdmin && currentlyAdmin) {

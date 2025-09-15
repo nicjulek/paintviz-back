@@ -23,7 +23,7 @@ export class PecaController {
                 nome_peca,
                 id_svg,
                 id_carroceria,
-                id_pintura,
+                id_pintura: id_pintura || null,
                 id_cor
             });
 
